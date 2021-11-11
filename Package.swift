@@ -1,5 +1,7 @@
 // swift-tools-version:5.3
 import PackageDescription
+import class Foundation.FileManager
+import struct Foundation.URL
 
 // Current stable version of the AWS iOS SDK
 // 
@@ -9,8 +11,8 @@ let latestVersion = "2.26.3"
 
 // Hosting url where the release artifacts are hosted.
 let hostingUrl = "https://releases.amplify.aws/aws-sdk-ios/"
-let localPath = "XCF/"
-let localPathEnabled = false
+let localPath = "XCF"
+let localPathEnabled = true
 
 // Map between the available frameworks and the checksum
 //
@@ -65,9 +67,31 @@ let frameworksToChecksum = [
     "AWSUserPoolsSignIn": "15885dcb5eda644c82080e98cc608f3b20cdaca9138aca0a19c59ecda791ef51"
 ]
 
-var products = frameworksToChecksum.keys.map {Product.library(name: $0, targets: [$0])}
+func loadFrameworks() -> [String] {
+    let fileManager = FileManager.default
+    let rootURL = URL(fileURLWithPath: fileManager.currentDirectoryPath)
+    let xcfURL = rootURL.appendingPathComponent(localPath)
+    let paths = (try? fileManager.contentsOfDirectory(atPath: xcfURL.path)) ?? []
+    let frameworks = paths
+        .filter { $0.hasSuffix(".xcframework") }
+        .map { xcfURL.appendingPathComponent($0) }
+        .map { $0.deletingPathExtension().lastPathComponent }
+    return frameworks
+}
 
-func createTarget(framework: String, checksum: String) -> Target {
+let frameworks = localPathEnabled ? loadFrameworks() : []
+
+func createProducts() -> [Product] {
+    let products: [Product]
+    if localPathEnabled {
+        products = frameworks.map { Product.library(name: $0, targets: [$0]) }
+    } else {
+        products = frameworksToChecksum.keys.map { Product.library(name: $0, targets: [$0]) }
+    }
+    return products
+}
+
+func createTarget(framework: String, checksum: String = "") -> Target {
     localPathEnabled ?
         Target.binaryTarget(name: framework, 
                             path: "\(localPath)/\(framework).xcframework") :
@@ -76,9 +100,23 @@ func createTarget(framework: String, checksum: String) -> Target {
                             checksum: checksum)
 }
 
-var targets = frameworksToChecksum.map { framework, checksum in
-    createTarget(framework: framework, checksum: checksum)
+func createTargets() -> [Target] {
+    let targets: [Target]
+    if localPathEnabled {
+        targets = frameworks.map {
+            createTarget(framework: $0)
+        }
+    } else {
+        targets = frameworksToChecksum.map { framework, checksum in
+            createTarget(framework: framework, checksum: checksum)
+        }
+    }
+    return targets
+
 }
+
+let products = createProducts()
+let targets = createTargets()
 
 let package = Package(
     name: "AWSiOSSDKV2",

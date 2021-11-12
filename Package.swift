@@ -13,6 +13,7 @@ let latestVersion = "2.26.3"
 let hostingUrl = "https://releases.amplify.aws/aws-sdk-ios/"
 let localPath = "XCF"
 let localPathEnabled = true
+let readFilesystem = false
 
 // Map between the available frameworks and the checksum
 //
@@ -67,7 +68,7 @@ let frameworksToChecksum = [
     "AWSUserPoolsSignIn": "15885dcb5eda644c82080e98cc608f3b20cdaca9138aca0a19c59ecda791ef51"
 ]
 
-func loadFrameworks() -> [String] {
+var frameworksOnFileystem: [String] {
     let fileManager = FileManager.default
     let rootURL = URL(fileURLWithPath: fileManager.currentDirectoryPath)
     let xcfURL = rootURL.appendingPathComponent(localPath)
@@ -79,7 +80,13 @@ func loadFrameworks() -> [String] {
     return frameworks
 }
 
-let frameworks = localPathEnabled ? loadFrameworks() : []
+var frameworksFromDictionary: [String] {
+    frameworksToChecksum.map { $0.key }
+}
+
+var frameworks: [String] {
+    readFilesystem ? frameworksOnFileystem : frameworksFromDictionary
+}
 
 func createProducts() -> [Product] {
     let products: [Product]

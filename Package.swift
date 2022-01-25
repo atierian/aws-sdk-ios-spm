@@ -2,6 +2,7 @@
 import PackageDescription
 import class Foundation.FileManager
 import struct Foundation.URL
+import Foundation
 
 // Current stable version of the AWS iOS SDK
 //
@@ -74,64 +75,34 @@ let frameworksToChecksum = [
     "AWSUserPoolsSignIn": "e3ec5ec0c7a506c7305541099b5417deeeab0d9d3d09da6abf4ce4bfab2b3c4f"
 ]
 
+struct SDK: Codable {
+    struct Framework: Codable {
+        let name: String
+        let directDependencies: [String]
+    }
 
-extension Target.Dependency {
-    // Framework dependencies present in the SDK
-    static let awsCore: Self = .target(name: "AWSCore")
-    static let awsAuthCore: Self = .target(name: "AWSAuthCore")
-    static let awsCognitoIdentityProviderASF: Self = .target(name: "AWSCognitoIdentityProviderASF")
-    static let awsCognitoIdentityProvider: Self = .target(name: "AWSCognitoIdentityProvider")
+    let frameworks: [Framework]
+
+    var dependencyMap: [String: [Target.Dependency]] {
+        frameworks.reduce(into: [String: [Target.Dependency]]()) { map, framework in
+            map[framework.name] = framework.directDependencies
+                .map { Target.Dependency.target(name: $0) }
+        }
+    }
 }
 
-let depdenencyMap: [String: [Target.Dependency]] = [
-    "AWSAPIGateway": [.awsCore],
-    "AWSAppleSignIn": [.awsCore, .awsAuthCore],
-    "AWSAuthCore": [.awsCore],
-    "AWSAuthUI": [.awsCore, .awsAuthCore],
-    "AWSAutoScaling": [.awsCore],
-    "AWSChimeSDKIdentity": [.awsCore],
-    "AWSChimeSDKMessaging": [.awsCore],
-    "AWSCloudWatch": [.awsCore],
-    "AWSCognitoAuth": [.awsCore, .awsCognitoIdentityProviderASF],
-    "AWSCognitoIdentityProvider": [.awsCore, .awsCognitoIdentityProviderASF],
-    "AWSCognitoIdentityProviderASF": [.awsCore],
-    "AWSComprehend": [.awsCore],
-    "AWSConnect": [.awsCore],
-    "AWSConnectParticipant": [.awsCore],
-    "AWSCore": [],
-    "AWSDynamoDB": [.awsCore],
-    "AWSEC2": [.awsCore],
-    "AWSElasticLoadBalancing": [.awsCore],
-    "AWSFacebookSignIn": [.awsCore, .awsAuthCore],
-    "AWSGoogleSignIn": [.awsCore, .awsAuthCore],
-    "AWSIoT": [.awsCore],
-    "AWSKMS": [.awsCore],
-    "AWSKinesis": [.awsCore],
-    "AWSKinesisVideo": [.awsCore],
-    "AWSKinesisVideoArchivedMedia": [.awsCore],
-    "AWSKinesisVideoSignaling": [.awsCore],
-    "AWSLambda": [.awsCore],
-    "AWSLex": [.awsCore],
-    "AWSLocationXCF": [.awsCore],
-    "AWSLogs": [.awsCore],
-    "AWSMachineLearning": [.awsCore],
-    "AWSMobileClientXCF": [.awsAuthCore, .awsCognitoIdentityProvider],
-    "AWSPinpoint": [.awsCore],
-    "AWSPolly": [.awsCore],
-    "AWSRekognition": [.awsCore],
-    "AWSS3": [.awsCore],
-    "AWSSES": [.awsCore],
-    "AWSSNS": [.awsCore],
-    "AWSSQS": [.awsCore],
-    "AWSSageMakerRuntime": [.awsCore],
-    "AWSSimpleDB": [.awsCore],
-    "AWSTextract": [.awsCore],
-    "AWSTranscribe": [.awsCore],
-    "AWSTranscribeStreaming": [.awsCore],
-    "AWSTranslate": [.awsCore],
-    "AWSUserPoolsSignIn": [.awsCognitoIdentityProvider, .awsAuthCore, .awsCore]
-]
+func createDependencyMap() -> [String: [Target.Dependency]] {
+    let root = URL(fileURLWithPath: #file)
+        .deletingLastPathComponent()
+        .appendingPathComponent("ManifestSupport").path
 
+    let json = try! String(contentsOfFile: "\(root)/DependencyMap.json")
+    let data = Data(json.utf8)
+    let sdk = try! JSONDecoder().decode(SDK.self, from: data)
+    return sdk.dependencyMap
+}
+
+let dependencyMap = createDependencyMap()
 
 var frameworksOnFilesystem: [String] {
     let fileManager = FileManager.default
@@ -158,7 +129,7 @@ func createProducts() -> [Product] {
         products = frameworks.map { Product.library(name: $0, targets: [$0]) }
     } else {
         products = frameworks.map { framework -> Product in
-            if depdenencyMap[framework]!.isEmpty {
+            if dependencyMap[framework]!.isEmpty {
                 return Product.library(name: framework, targets: [framework])
             }
             // If framework has dependencies, create a `<framework>-Target`
@@ -190,7 +161,7 @@ func createTargets() -> [Target] {
 
             // If the framework has dependencies, create an additional target that links the
             // framework and its depedencies using the previously created product.
-            if var dependencies = depdenencyMap[framework], !dependencies.isEmpty {
+            if var dependencies = dependencyMap[framework], !dependencies.isEmpty {
                 dependencies.append(.target(name: framework))
                 targets.append(
                     .target(

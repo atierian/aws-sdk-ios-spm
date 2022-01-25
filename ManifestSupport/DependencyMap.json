@@ -1,0 +1,188 @@
+{
+    "frameworks": [
+   {
+        "name": "AWSAPIGateway",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSAppleSignIn",
+        "directDependencies": ["AWSCore", "AWSAuthCore"]
+    },
+    {
+        "name": "AWSAuthCore",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSAuthUI",
+        "directDependencies": ["AWSCore", "AWSAuthCore"]
+    },
+    {
+        "name": "AWSAutoScaling",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSChimeSDKIdentity",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSChimeSDKMessaging",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSCloudWatch",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSCognitoAuth",
+        "directDependencies": ["AWSCore", "AWSCognitoIdentityProviderASF"]
+    },
+    {
+        "name": "AWSCognitoIdentityProvider",
+        "directDependencies": ["AWSCore", "AWSCognitoIdentityProviderASF"]
+    },
+    {
+        "name": "AWSCognitoIdentityProviderASF",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSComprehend",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSConnect",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSConnectParticipant",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSCore",
+        "directDependencies": []
+    },
+    {
+        "name": "AWSDynamoDB",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSEC2",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSElasticLoadBalancing",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSFacebookSignIn",
+        "directDependencies": ["AWSCore", "AWSAuthCore"]
+    },
+    {
+        "name": "AWSGoogleSignIn",
+        "directDependencies": ["AWSCore", "AWSAuthCore"]
+    },
+    {
+        "name": "AWSIoT",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSKMS",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSKinesis",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSKinesisVideo",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSKinesisVideoArchivedMedia",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSKinesisVideoSignaling",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSLambda",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSLex",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSLocationXCF",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSLogs",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSMachineLearning",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSMobileClientXCF",
+        "directDependencies": ["AWSAuthCore", "AWSCognitoIdentityProvider"]
+    },
+    {
+        "name": "AWSPinpoint",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSPolly",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSRekognition",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSS3",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSSES",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSSNS",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSSQS",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSSageMakerRuntime",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSSimpleDB",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSTextract",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSTranscribe",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSTranscribeStreaming",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSTranslate",
+        "directDependencies": ["AWSCore"]
+    },
+    {
+        "name": "AWSUserPoolsSignIn",
+        "directDependencies": ["AWSCore", "AWSAuthCore", "AWSCognitoIdentityProvider"]
+    }
+    ]
+}

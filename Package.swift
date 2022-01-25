@@ -96,10 +96,17 @@ func createDependencyMap() -> [String: [Target.Dependency]] {
         .deletingLastPathComponent()
         .appendingPathComponent("ManifestSupport").path
 
-    let json = try! String(contentsOfFile: "\(root)/DependencyMap.json")
-    let data = Data(json.utf8)
-    let sdk = try! JSONDecoder().decode(SDK.self, from: data)
-    return sdk.dependencyMap
+    do {
+        let json = try String(contentsOfFile: "\(root)/DependencyMap.json")
+        let data = Data(json.utf8)
+        let sdk = try JSONDecoder().decode(SDK.self, from: data)
+        return sdk.dependencyMap
+    } catch {
+        fatalError("""
+        Error Creating Dependency Map
+        \(error)
+        """)
+    }
 }
 
 let dependencyMap = createDependencyMap()

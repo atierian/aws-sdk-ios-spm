@@ -104,6 +104,7 @@ func createDependencyMap() -> [String: [Target.Dependency]] {
     } catch {
         fatalError("""
         Error Creating Dependency Map
+        root: \(root)
         \(error)
         """)
     }
